@@ -27,18 +27,13 @@ SortAfter("boat_obsidian", "boat_woodlegs")
 
 if env.GetModConfigData("eyebrella_second_recipe") then
     AddRecipePostInit("eyebrellahat", function(recipe)
-        if type(recipe.FindAndConvertIngredient) ~= "function" then
-            print("[IA DeluxeAddon] Eyebrella alternative ingredient skipped: GemCore FindAndConvertIngredient unavailable.")
-            return
-        end
-        local ingredient = recipe:FindAndConvertIngredient("deerclops_eyeball")
-        if ingredient then
-            if type(ingredient.AddDictionaryPrefab) ~= "function" then
-                print("[IA DeluxeAddon] Eyebrella alternative ingredient skipped: GemCore AddDictionaryPrefab unavailable.")
-                return
-            end
-            ingredient:AddDictionaryPrefab("tigereye")
-        end
+        recipe.ingredient_sets = recipe.ingredient_sets or {}
+        recipe.ingredient_sets[RECIPE_GAME_TYPE.SW] =
+        {
+            Ingredient("tigereye", 1),
+            Ingredient("twigs", 15),
+            Ingredient("boneshard", 4),
+        }
     end)
 end
 
