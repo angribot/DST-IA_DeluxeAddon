@@ -6,7 +6,7 @@ local boat_obsidian = {
         slotpos = {},
         animbank = "boat_hud_raft",
         animbuild = "boat_hud_raft",
-        pos = Vector3(750, 75, 0),
+        pos = Vector3(0, 0, 0),
         badgepos = Vector3(0, 40, 0),
         equipslotroot = Vector3(-80, 40, 0),
         --side_align_tip = -500,
@@ -23,7 +23,7 @@ local boat_obsidian = {
     side_align_tip = -500,
     canbeopened = false,
     hasboatequipslots = true,
-    enableboatequipslots = false,
+    hideboatequipslots = true,
 }
 
 params["boat_obsidian"] = boat_obsidian

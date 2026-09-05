@@ -68,11 +68,11 @@ local function onrepaired(inst, doer, repair_item)
 end
 
 local function ondisembarked(inst)
-    inst.components.workable.workable = false
+    inst.components.workable:SetWorkable(true)
 end
 
 local function onembarked(inst)
-    inst.components.workable.workable = true
+    inst.components.workable:SetWorkable(false)
 end
 
 local function onopen(inst)
@@ -111,6 +111,15 @@ local function common()
     inst.sailmusic = "sailing"
 
     inst.boatvisuals = {}
+
+    inst:AddComponent("rowboatwakespawner")
+    inst.components.rowboatwakespawner:SetFacingOffset({
+        [FACING_RIGHT] = {0.85, -0.5},
+        [FACING_UP] = {0.75, 0.075},
+        [FACING_LEFT] = {0.475, 0.5},
+        [FACING_DOWN] = {-0.75, -0.125},
+        [FACING_NONE] = {0, 0},
+    })
 
     inst.boatname = net_string(inst.GUID, "boatname")
 
@@ -168,8 +177,6 @@ local function common()
 
     inst.waveboost = TUNING.WAVEBOOST
 
-    inst:AddComponent("rowboatwakespawner")
-
     inst:AddComponent("boathealth")
     inst.components.boathealth:SetDepletedFn(sink)
     inst.components.boathealth:SetHealth(TUNING.RAFT_HEALTH, TUNING.RAFT_PERISHTIME)
@@ -189,8 +196,8 @@ local function common()
     inst.components.repairable.repairmaterial = "boat"
     inst.components.repairable.onrepaired = onrepaired
 
-    inst:ListenForEvent("embarked", onembarked)
-    inst:ListenForEvent("disembarked", ondisembarked)
+    inst:ListenForEvent("sailable_occupied", onembarked)
+    inst:ListenForEvent("sailable_unoccupied", ondisembarked)
 
     inst.onworked = onworked
 
@@ -198,10 +205,13 @@ local function common()
 
     inst.components.flotsamspawner.flotsamprefab = "flotsam_bamboo"
 
-    inst:AddSpoofedComponent("boatcontainer", "container")
+    inst:AddComponent("container")
 
     inst.components.container.onopenfn = onopen
     inst.components.container.onclosefn = onclose
+    inst.components.container.skipclosesnd = true
+    inst.components.container.skipopensnd = true
+    inst.components.container.stay_open_on_hide = true
 
     inst:AddComponent("boatvisualmanager")
 
@@ -317,7 +327,7 @@ end
 
 
 local function EquipSail(inst)
-    local sailitem = inst.components.container:GetItemInBoatSlot(BOATEQUIPSLOTS.BOAT_SAIL)
+    local sailitem = inst.components.container:GetBoatEquippedItem(BOATEQUIPSLOTS.BOAT_SAIL)
     if sailitem then
         sailitem:Remove()
     end
@@ -333,7 +343,7 @@ local function EquipSail(inst)
 end
 
 local function get_status(inst)
-    local sailitem = inst.components.container:GetItemInBoatSlot(BOATEQUIPSLOTS.BOAT_SAIL)
+    local sailitem = inst.components.container:GetBoatEquippedItem(BOATEQUIPSLOTS.BOAT_SAIL)
     return sailitem and sailitem.prefab == "sail_obsidian" and "ACTIVE"
 end
 
