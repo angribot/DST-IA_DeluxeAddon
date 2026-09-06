@@ -1,13 +1,11 @@
 local wilson_attack = 34
 local total_day_time = TUNING.TOTAL_DAY_TIME
 
-TUNING.MOONGLASSMACHETE =
-    {
-        EFFECTIVENESS = 3,
-        CONSUMPTION = 1.5,
-        DAMAGE = wilson_attack,
-    }
-
+TUNING.MOONGLASSMACHETE = {
+	EFFECTIVENESS = 3,
+	CONSUMPTION = 1.5,
+	DAMAGE = wilson_attack,
+}
 
 TUNING.OBSIDIANBOAT_HEALTH = 400
 TUNING.OBSIDIANBOAT_PERISHTIME = total_day_time * 10

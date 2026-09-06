@@ -1,12 +1,12 @@
 Assets = {}
 PrefabFiles = {
-    "iad_skinprefabs",
-    "iad_spices",
+	"iad_skinprefabs",
+	"iad_spices",
 
-    "moonglassmachete",
+	"moonglassmachete",
 
-    "boat_obsidian",
-    "sail_obsidian",
+	"boat_obsidian",
+	"sail_obsidian",
 }
 
 GlassicAPI.InitMinimapAtlas("iad_minimap", Assets)
