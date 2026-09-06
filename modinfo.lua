@@ -6,14 +6,20 @@ local function zheng(zh, en)
 	return LOC[locale] or en
 end
 
-version = "1.14.0"
+version = "1.14.1"
 name = zheng("岛屿冒险：豪华补充包", "Island Adventures: Deluxe Addon")
 author = "Civi, Tony, Jerry, Yulong"
 changelog = zheng(
 	[[
+- 修复驾驶黑曜石船时手上物品消失
+
+最近更新：
 - 适配兼容岛屿冒险最新本体(2026-09-06)
 ]],
 	[[
+- Fix held item visibility while sailing the obsidian boat
+
+Recent Changes:
 - Make compatible with IA (2026-09-06)
 ]]
 )
