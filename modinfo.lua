@@ -6,20 +6,22 @@ local function zheng(zh, en)
 	return LOC[locale] or en
 end
 
-version = "1.14.1"
+version = "1.14.2"
 name = zheng("岛屿冒险：豪华补充包", "Island Adventures: Deluxe Addon")
 author = "Civi, Tony, Jerry, Yulong"
 changelog = zheng(
 	[[
-- 修复驾驶黑曜石船时手上物品消失
+- 移除机器人用睿智帽制作模块、吃死水母充电的补丁（IA 已自带）
 
 最近更新：
+- 修复驾驶黑曜石船时手上物品消失
 - 适配兼容岛屿冒险最新本体(2026-09-06)
 ]],
 	[[
-- Fix held item visibility while sailing the obsidian boat
+- Remove patches for crafting WX78 modules with Brain of Thought and charging from dead jellyfish (now included in IA)
 
 Recent Changes:
+- Fix held item visibility while sailing the obsidian boat
 - Make compatible with IA (2026-09-06)
 ]]
 )
@@ -113,7 +115,7 @@ configuration_options = {
 	AddTitle(zheng("- 玩家相关 -", "- The Player -")),
 	{
 		name = "wx78_charge_via_zappy_food",
-		label = zheng("机器人吃电料理充电", "WX78 charge via zappy food"),
+		label = zheng("机器人吃水母调味料理充电", "WX78 charge via Zappy Powder dishes"),
 		options = boolean,
 		default = true,
 	},
@@ -135,12 +137,6 @@ configuration_options = {
 		name = "ancient_obsidian_workbench",
 		label = zheng("远古黑曜石工作台", "Ancient Obsidian Workbench"),
 		hover = zheng("黑曜石工作台可以合成远古科技", "Enable crafting ancient tech at obsidian workbench."),
-		options = boolean,
-		default = true,
-	},
-	{
-		name = "wx78_jellyfishbrain",
-		label = zheng("睿智帽可以制作机器人模块", "WX Modules in Brain of Thought"),
 		options = boolean,
 		default = true,
 	},

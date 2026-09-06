@@ -55,7 +55,6 @@ for name, recipe in pairs(ia_spiced) do
 	spicedfoods[name] = nil
 end
 
-TUNING.WX78_CHARGING_FOODS["jellyfish_dead"] = wx78_chargable or TUNING.WX78_CHARGING_FOODS["jellyfish_dead"]
 ------------------------------------------------
 
 local anim_state_override_symbol = AnimState.OverrideSymbol
