@@ -10,25 +10,15 @@ local function zh_en(a, b)
 	})
 end
 
-version = "1.13.3"
+version = "1.14.0"
 name = zh_en("岛屿冒险：豪华补充包", "Island Adventures: Deluxe Addon")
 author = "Civi, Tony, Jerry, Yulong"
 changelog = zh_en(
 	[[
-- Island Adventures 本体在经过一年半之后终于自己重做了水坑，我们会暂时移除补充包里的 水坑重做 功能
-
-- 黑曜石船兼容"刻舟"。
-
-- 修复一处崩溃。
-- 新道具【黑曜石船】：使用龙心作为燃料的奇怪的船。
+- 适配兼容岛屿冒险最新本体(2026-09-06)
 ]],
 	[[
-- Island Adventures finally reworked it's flooding system after a year and half, we'll remove our flooding rework feature for now
-
-- Make Obsidian Boat compatible with "Name Boat".
-
-- Fix a crash on dedicated servers.
-- New Item "Obsidian Boat": consumes Dragoon Heart as fuel.
+- Make compatible with IA (2026-09-06)
 ]]
 )
 description = zh_en("版本: ", "Version: ")
