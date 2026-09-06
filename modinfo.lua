@@ -6,20 +6,22 @@ local function zheng(zh, en)
 	return LOC[locale] or en
 end
 
-version = "1.14.1"
+version = "1.14.2"
 name = zheng("岛屿冒险：豪华补充包", "Island Adventures: Deluxe Addon")
 author = "Civi, Tony, Jerry, Yulong"
 changelog = zheng(
 	[[
-- 修复驾驶黑曜石船时手上物品消失
+- 移除机器人用睿智帽制作模块、吃死水母充电的补丁（IA 已自带）
 
 最近更新：
+- 修复驾驶黑曜石船时手上物品消失
 - 适配兼容岛屿冒险最新本体(2026-09-06)
 ]],
 	[[
-- Fix held item visibility while sailing the obsidian boat
+- Remove patches for crafting WX78 modules with Brain of Thought and charging from dead jellyfish (now included in IA)
 
 Recent Changes:
+- Fix held item visibility while sailing the obsidian boat
 - Make compatible with IA (2026-09-06)
 ]]
 )
