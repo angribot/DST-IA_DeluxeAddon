@@ -113,7 +113,7 @@ configuration_options = {
 	AddTitle(zheng("- 玩家相关 -", "- The Player -")),
 	{
 		name = "wx78_charge_via_zappy_food",
-		label = zheng("机器人吃电料理充电", "WX78 charge via zappy food"),
+		label = zheng("机器人吃水母调味料理充电", "WX78 charge via Zappy Powder dishes"),
 		options = boolean,
 		default = true,
 	},
@@ -135,12 +135,6 @@ configuration_options = {
 		name = "ancient_obsidian_workbench",
 		label = zheng("远古黑曜石工作台", "Ancient Obsidian Workbench"),
 		hover = zheng("黑曜石工作台可以合成远古科技", "Enable crafting ancient tech at obsidian workbench."),
-		options = boolean,
-		default = true,
-	},
-	{
-		name = "wx78_jellyfishbrain",
-		label = zheng("睿智帽可以制作机器人模块", "WX Modules in Brain of Thought"),
 		options = boolean,
 		default = true,
 	},
