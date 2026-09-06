@@ -17,7 +17,8 @@ local on_change_delta = ObsidianTool.OnChargeDelta
 function ObsidianTool:OnChargeDelta(...)
 	on_change_delta(self, ...)
 	local skin_build = self.inst:GetSkinBuild()
-	local equipper = self.inst.components.equippable
+	local equipper = not (self.inst.prefab == "sail_obsidian")
+		and self.inst.components.equippable
 		and self.inst.components.equippable:IsEquipped()
 		and self.inst.components.inventoryitem
 		and self.inst.components.inventoryitem:GetGrandOwner()
