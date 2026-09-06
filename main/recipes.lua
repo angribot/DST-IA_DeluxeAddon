@@ -18,6 +18,7 @@ local function AquaticRecipe(name, data)
         data.platform_buffer_max = data.platform_buffer_max or (data.platform_distance and math.sqrt(data.platform_distance)) or (data.distance and math.sqrt(data.distance)) or nil
         data.shore_buffer_max = data.shore_buffer_max or (data.shore_distance and ((data.shore_distance+1)/2)) or nil
         AllRecipes[name].aquatic = data
+        AllRecipes[name].build_mode = BUILDMODE.WATER
     end
 end
 
