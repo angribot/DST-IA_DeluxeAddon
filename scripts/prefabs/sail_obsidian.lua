@@ -229,7 +229,7 @@ local function common_master(inst)
 
     MakeHauntableLaunch(inst)
 
-    MakeInvItemIA(inst)
+    inst:AddComponent("inventoryitem")
 
     inst:AddComponent("fueled")
     inst.components.fueled.fueltype = "USAGE"
