@@ -26,7 +26,7 @@ AquaticRecipe("boat_obsidian", {distance=4, platform_buffer_min=2})
 SortAfter("boat_obsidian", "boat_woodlegs")
 
 if env.GetModConfigData("eyebrella_second_recipe") then
-    AddRecipePostInit("eyebrellahat", function(recipe)
+    env.AddRecipePostInit("eyebrellahat", function(recipe)
         recipe.ingredient_sets = recipe.ingredient_sets or {}
         recipe.ingredient_sets[RECIPE_GAME_TYPE.SW] =
         {
