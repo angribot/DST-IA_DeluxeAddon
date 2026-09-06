@@ -38,7 +38,7 @@ end
 
 local function masterfn(inst)
 
-    MakeInvItemIA(inst)
+    inst:AddComponent("inventoryitem")
 
     inst:AddComponent("weapon")
     inst.components.weapon:SetDamage(TUNING.MOONGLASSMACHETE.DAMAGE)
@@ -69,6 +69,9 @@ end
 
 local function fn()
     local inst = pristinefn()
+
+    inst:AddComponent("symbolswapdata")
+    inst.components.symbolswapdata:SetData("glassmachete", "swap_glassmachete")
 
     inst.entity:SetPristine()
 

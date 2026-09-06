@@ -3,10 +3,10 @@ GLOBAL.setfenv(1, GLOBAL)
 
 local _OnRead = nil
 local function OnRead(inst, reader, ...)
-    if IsInIAClimate(reader) then
+    if IsShipwreckedWorld() then
         if TheWorld.state.hurricane then
             TheWorld:PushEvent("ms_forcehurricane",  false)
-        elseif TheWorld.state.season == "winter" then
+        elseif TheWorld.state.iswetseason then
             TheWorld:PushEvent("ms_forcehurricane",  true)
         end
     end

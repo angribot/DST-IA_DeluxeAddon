@@ -33,14 +33,10 @@ for name, recipe in pairs(spicedfoods) do
     end
 end
 
+local ia_spicedfoods = ia_require("main/ia_spicedfoods")
 local _spicedfoods = shallowcopy(spicedfoods)
-local ia_foods = {}
-for name, recipe in pairs(IA_PREPAREDFOODS) do
-    if recipe.spice == nil then
-        ia_foods[name] = recipe
-    end
-end
-GenerateSpicedFoods(ia_foods)
+GenerateSpicedFoods(ia_require("main/ia_preparedfoods"))
+GenerateSpicedFoods(ia_require("main/ia_preparedfoods_warly"))
 local ia_spiced = {}
 for name, recipe in pairs(spicedfoods) do
     if not _spicedfoods[name] then
@@ -52,7 +48,9 @@ for name, recipe in pairs(ia_spiced) do
     if recipe.spice == "SPICE_JELLYFISH" then
         TUNING.WX78_CHARGING_FOODS[name] = wx78_chargable or TUNING.WX78_CHARGING_FOODS[name]
     end
-    IA_PREPAREDFOODS[name] = recipe
+    ia_spicedfoods[name] = recipe
+    -- IA creates these prefabs; keep them out of the vanilla prefab list.
+    spicedfoods[name] = nil
 end
 
 TUNING.WX78_CHARGING_FOODS["jellyfish_dead"] = wx78_chargable or TUNING.WX78_CHARGING_FOODS["jellyfish_dead"]

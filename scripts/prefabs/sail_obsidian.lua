@@ -87,7 +87,7 @@ local function stopconsuming(inst)
 end
 
 local function onembarked(boat, data)
-    local item = boat.components.container:GetItemInBoatSlot(BOATEQUIPSLOTS.BOAT_SAIL)
+    local item = boat.components.container:GetBoatEquippedItem(BOATEQUIPSLOTS.BOAT_SAIL)
 
     if data.sailor.components.locomotor then
         data.sailor.components.locomotor:SetExternalSpeedMultiplier(item, "SAIL", item.sail_speed_mult)
@@ -97,7 +97,7 @@ local function onembarked(boat, data)
 end
 
 local function ondisembarked(boat, data)
-    local item = boat.components.container:GetItemInBoatSlot(BOATEQUIPSLOTS.BOAT_SAIL)
+    local item = boat.components.container:GetBoatEquippedItem(BOATEQUIPSLOTS.BOAT_SAIL)
     stopconsuming(item)
 
     if data.sailor.components.locomotor then
@@ -109,12 +109,12 @@ end
 
 
 local function onstartmoving(boat, data)
-    local item = boat.components.container:GetItemInBoatSlot(BOATEQUIPSLOTS.BOAT_SAIL)
+    local item = boat.components.container:GetBoatEquippedItem(BOATEQUIPSLOTS.BOAT_SAIL)
     startconsuming(item)
 end
 
 local function onstopmoving(boat, data)
-    local item = boat.components.container:GetItemInBoatSlot(BOATEQUIPSLOTS.BOAT_SAIL)
+    local item = boat.components.container:GetBoatEquippedItem(BOATEQUIPSLOTS.BOAT_SAIL)
     stopconsuming(item)
 end
 
@@ -229,7 +229,7 @@ local function common_master(inst)
 
     MakeHauntableLaunch(inst)
 
-    MakeInvItemIA(inst)
+    inst:AddComponent("inventoryitem")
 
     inst:AddComponent("fueled")
     inst.components.fueled.fueltype = "USAGE"

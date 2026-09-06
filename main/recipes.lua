@@ -18,6 +18,7 @@ local function AquaticRecipe(name, data)
         data.platform_buffer_max = data.platform_buffer_max or (data.platform_distance and math.sqrt(data.platform_distance)) or (data.distance and math.sqrt(data.distance)) or nil
         data.shore_buffer_max = data.shore_buffer_max or (data.shore_distance and ((data.shore_distance+1)/2)) or nil
         AllRecipes[name].aquatic = data
+        AllRecipes[name].build_mode = BUILDMODE.WATER
     end
 end
 
@@ -26,11 +27,14 @@ AquaticRecipe("boat_obsidian", {distance=4, platform_buffer_min=2})
 SortAfter("boat_obsidian", "boat_woodlegs")
 
 if env.GetModConfigData("eyebrella_second_recipe") then
-    AddRecipePostInit("eyebrellahat", function(recipe)
-        local ingredient = recipe:FindAndConvertIngredient("deerclops_eyeball")
-        if ingredient then
-            ingredient:AddDictionaryPrefab("tigereye")
-        end
+    env.AddRecipePostInit("eyebrellahat", function(recipe)
+        recipe.ingredient_sets = recipe.ingredient_sets or {}
+        recipe.ingredient_sets[RECIPE_GAME_TYPE.SW] =
+        {
+            Ingredient("tigereye", 1),
+            Ingredient("twigs", 15),
+            Ingredient("boneshard", 4),
+        }
     end)
 end
 
