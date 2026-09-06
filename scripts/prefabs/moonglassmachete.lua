@@ -70,6 +70,9 @@ end
 local function fn()
     local inst = pristinefn()
 
+    inst:AddComponent("symbolswapdata")
+    inst.components.symbolswapdata:SetData("glassmachete", "swap_glassmachete")
+
     inst.entity:SetPristine()
 
     if not TheWorld.ismastersim then
