@@ -1,41 +1,27 @@
-local function loc(t)
-	t.zht = t.zht or t.zh
-	return t[locale] or t.en
+local function zheng(zh, en)
+	local LOC = {
+		zh = zh,
+		zht = zh,
+	}
+	return LOC[locale] or en
 end
 
-local function zh_en(a, b)
-	return loc({
-		zh = a,
-		en = b,
-	})
-end
-
-version = "1.13.3"
-name = zh_en("岛屿冒险：豪华补充包", "Island Adventures: Deluxe Addon")
+version = "1.14.0"
+name = zheng("岛屿冒险：豪华补充包", "Island Adventures: Deluxe Addon")
 author = "Civi, Tony, Jerry, Yulong"
-changelog = zh_en(
+changelog = zheng(
 	[[
-- Island Adventures 本体在经过一年半之后终于自己重做了水坑，我们会暂时移除补充包里的 水坑重做 功能
-
-- 黑曜石船兼容"刻舟"。
-
-- 修复一处崩溃。
-- 新道具【黑曜石船】：使用龙心作为燃料的奇怪的船。
+- 适配兼容岛屿冒险最新本体(2026-09-06)
 ]],
 	[[
-- Island Adventures finally reworked it's flooding system after a year and half, we'll remove our flooding rework feature for now
-
-- Make Obsidian Boat compatible with "Name Boat".
-
-- Fix a crash on dedicated servers.
-- New Item "Obsidian Boat": consumes Dragoon Heart as fuel.
+- Make compatible with IA (2026-09-06)
 ]]
 )
-description = zh_en("版本: ", "Version: ")
+description = zheng("版本: ", "Version: ")
 	.. version
-	.. zh_en("\n\n更新内容:\n", "\n\nChangelog:\n")
+	.. zheng("\n\n更新内容:\n", "\n\nChanges:\n")
 	.. changelog
-	.. zh_en("\n“让你的岛屿冒险更加丰富！”", '\n"Make IA great L again."')
+	.. zheng("\n“让你的岛屿冒险更加丰富！”", '\n"Make IA great L again."')
 api_version = 10
 dst_compatible = true
 all_clients_require_mod = true
@@ -79,91 +65,91 @@ local function AddTitle(title, hover)
 end
 
 local boolean = {
-	{ description = zh_en("启用", "Yes"), data = true },
-	{ description = zh_en("禁用", "No"), data = false },
+	{ description = zheng("启用", "Yes"), data = true },
+	{ description = zheng("禁用", "No"), data = false },
 }
 
 configuration_options = {
-	AddTitle(zh_en("- 世界相关 -", "- The World -")),
+	AddTitle(zheng("- 世界相关 -", "- The World -")),
 	{
 		name = "dragoonfly",
-		label = zh_en("龙蝇震撼回归火山", "Dragonfly"),
-		hover = zh_en("龙蝇会刷新在火山区域\n仅在世界生成时启用才会生效", "Dragonfly spawns in the Volcano.\nOnly available at worldgen stage."),
+		label = zheng("龙蝇震撼回归火山", "Dragonfly"),
+		hover = zheng("龙蝇会刷新在火山区域\n仅在世界生成时启用才会生效", "Dragonfly spawns in the Volcano.\nOnly available at worldgen stage."),
 		options = boolean,
 		default = true,
 	},
 	{
 		name = "starstuff_octopusking",
-		label = zh_en("用星杖交易换取月杖", "Star Stuff Trading"),
-		hover = zh_en("满月时可以与章鱼王交易换取", "Trade with Octopus King, only available during full moon"),
+		label = zheng("用星杖交易换取月杖", "Star Stuff Trading"),
+		hover = zheng("满月时可以与章鱼王交易换取", "Trade with Octopus King, only available during full moon"),
 		options = boolean,
 		default = true,
 	},
 	{
 		name = "moonglass_octopusking",
-		label = zh_en("满月时交易月亮碎片", "Moon Glass Trading"),
-		hover = zh_en("满月时可以与章鱼王交易换取月亮碎片而非金币", "Trade for Moon Glass with Octopus King during full moon instead of Dubloon"),
+		label = zheng("满月时交易月亮碎片", "Moon Glass Trading"),
+		hover = zheng("满月时可以与章鱼王交易换取月亮碎片而非金币", "Trade for Moon Glass with Octopus King during full moon instead of Dubloon"),
 		options = boolean,
 		default = true,
 	},
 	{
 		name = "wet_quacken",
-		label = zh_en("海妖常驻潮湿", "Quacken always wet"),
+		label = zheng("海妖常驻潮湿", "Quacken always wet"),
 		options = boolean,
 		default = true,
 	},
 	{
 		name = "fish_farm_no_predators",
-		label = zh_en("鱼农场不刷狗", "Ban predators for fish farm"),
+		label = zheng("鱼农场不刷狗", "Ban predators for fish farm"),
 		options = boolean,
 		default = true,
 	},
-	AddTitle(zh_en("- 玩家相关 -", "- The Player -")),
+	AddTitle(zheng("- 玩家相关 -", "- The Player -")),
 	{
 		name = "wx78_charge_via_zappy_food",
-		label = zh_en("机器人吃电料理充电", "WX78 charge via zappy food"),
+		label = zheng("机器人吃电料理充电", "WX78 charge via zappy food"),
 		options = boolean,
 		default = true,
 	},
-	AddTitle(zh_en("- 配方相关 -", "- The Crafting -")),
+	AddTitle(zheng("- 配方相关 -", "- The Crafting -")),
 	{
 		name = "nope_gem_ingredients",
-		label = zh_en("移除宝石核心的多配方支持", "Nope Gem Core Ingredients"),
-		hover = zh_en("配方材料会根据世界类型自动判断", "Ingredients are judged by world type automatically."),
+		label = zheng("移除宝石核心的多配方支持", "Nope Gem Core Ingredients"),
+		hover = zheng("配方材料会根据世界类型自动判断", "Ingredients are judged by world type automatically."),
 		options = boolean,
 		default = true,
 	},
 	{
 		name = "eyebrella_second_recipe",
-		label = zh_en("虎鲨眼作为眼球伞的第二配方", "Tiger Eye as Eyebrella's ingredient"),
+		label = zheng("虎鲨眼作为眼球伞的第二配方", "Tiger Eye as Eyebrella's ingredient"),
 		options = boolean,
 		default = true,
 	},
 	{
 		name = "ancient_obsidian_workbench",
-		label = zh_en("远古黑曜石工作台", "Ancient Obsidian Workbench"),
-		hover = zh_en("黑曜石工作台可以合成远古科技", "Enable crafting ancient tech at obsidian workbench."),
+		label = zheng("远古黑曜石工作台", "Ancient Obsidian Workbench"),
+		hover = zheng("黑曜石工作台可以合成远古科技", "Enable crafting ancient tech at obsidian workbench."),
 		options = boolean,
 		default = true,
 	},
 	{
 		name = "wx78_jellyfishbrain",
-		label = zh_en("睿智帽可以制作机器人模块", "WX Modules in Brain of Thought"),
+		label = zheng("睿智帽可以制作机器人模块", "WX Modules in Brain of Thought"),
 		options = boolean,
 		default = true,
 	},
 	{
 		name = "craftable_atrium_loots",
-		label = zh_en("睿智帽可以制作骨三件套", "Craftable Atrium Loots"),
-		hover = zh_en("远古织影者的战利品三件套可以在睿智帽里制作", "Loots from Ancient Fuelweaver can be crafted via Brain of Thought."),
+		label = zheng("睿智帽可以制作骨三件套", "Craftable Atrium Loots"),
+		hover = zheng("远古织影者的战利品三件套可以在睿智帽里制作", "Loots from Ancient Fuelweaver can be crafted via Brain of Thought."),
 		options = boolean,
 		default = true,
 	},
-	AddTitle(zh_en("- 语言相关 -", "- The Translator -")),
+	AddTitle(zheng("- 语言相关 -", "- The Translator -")),
 	{
 		name = "e_yu",
-		label = zh_en("使用鹅语", "Enable 'e_yu'"),
-		hover = zh_en("启用一些奇怪的翻译", "Enable some strange zh translations"),
+		label = zheng("使用鹅语", "Enable 'e_yu'"),
+		hover = zheng("启用一些奇怪的翻译", "Enable some strange zh translations"),
 		options = boolean,
 		default = false,
 	},
