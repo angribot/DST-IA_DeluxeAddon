@@ -1,87 +1,84 @@
 local assets = {
-    Asset("ANIM", "anim/glassmachete.zip"),
+	Asset("ANIM", "anim/glassmachete.zip"),
 }
 
-
 local function onequip(inst, owner)
-    owner.AnimState:OverrideSymbol("swap_object", "glassmachete", "swap_glassmachete")
-    owner.AnimState:Show("ARM_carry")
-    owner.AnimState:Hide("ARM_normal")
+	owner.AnimState:OverrideSymbol("swap_object", "glassmachete", "swap_glassmachete")
+	owner.AnimState:Show("ARM_carry")
+	owner.AnimState:Hide("ARM_normal")
 end
 
 local function onunequip(inst, owner)
-    owner.AnimState:Hide("ARM_carry")
-    owner.AnimState:Show("ARM_normal")
+	owner.AnimState:Hide("ARM_carry")
+	owner.AnimState:Show("ARM_normal")
 end
 
-
 local function pristinefn()
-    local inst = CreateEntity()
-    local trans = inst.entity:AddTransform()
-    inst.entity:AddAnimState()
-    inst.entity:AddSoundEmitter()
-    inst.entity:AddNetwork()
+	local inst = CreateEntity()
+	local trans = inst.entity:AddTransform()
+	inst.entity:AddAnimState()
+	inst.entity:AddSoundEmitter()
+	inst.entity:AddNetwork()
 
-    MakeInventoryPhysics(inst)
+	MakeInventoryPhysics(inst)
 
-    inst.AnimState:SetBank("glassmachete")
-    inst.AnimState:SetBuild("glassmachete")
-    inst.AnimState:PlayAnimation("idle")
+	inst.AnimState:SetBank("glassmachete")
+	inst.AnimState:SetBuild("glassmachete")
+	inst.AnimState:PlayAnimation("idle")
 
-    inst:AddTag("sharp")
+	inst:AddTag("sharp")
 
-    MakeInventoryFloatable(inst)
-    inst.components.floater:UpdateAnimations("idle_water", "idle")
+	MakeInventoryFloatable(inst)
+	inst.components.floater:UpdateAnimations("idle_water", "idle")
 
-    return inst
+	return inst
 end
 
 local function masterfn(inst)
+	inst:AddComponent("inventoryitem")
 
-    inst:AddComponent("inventoryitem")
+	inst:AddComponent("weapon")
+	inst.components.weapon:SetDamage(TUNING.MOONGLASSMACHETE.DAMAGE)
 
-    inst:AddComponent("weapon")
-    inst.components.weapon:SetDamage(TUNING.MOONGLASSMACHETE.DAMAGE)
+	-----
+	inst:AddComponent("tool")
+	inst.components.tool:SetAction(ACTIONS.HACK)
+	inst.components.tool:SetAction(ACTIONS.HACK, TUNING.MOONGLASSMACHETE.EFFECTIVENESS)
+	-------
+	inst:AddComponent("finiteuses")
+	inst.components.finiteuses:SetMaxUses(TUNING.MACHETE_USES)
+	inst.components.finiteuses:SetUses(TUNING.MACHETE_USES)
+	inst.components.finiteuses:SetOnFinished(inst.Remove)
+	inst.components.finiteuses:SetConsumption(ACTIONS.HACK, TUNING.MOONGLASSMACHETE.CONSUMPTION)
+	-------
+	inst:AddComponent("equippable")
 
-    -----
-    inst:AddComponent("tool")
-    inst.components.tool:SetAction(ACTIONS.HACK)
-    inst.components.tool:SetAction(ACTIONS.HACK, TUNING.MOONGLASSMACHETE.EFFECTIVENESS)
-    -------
-    inst:AddComponent("finiteuses")
-    inst.components.finiteuses:SetMaxUses(TUNING.MACHETE_USES)
-    inst.components.finiteuses:SetUses(TUNING.MACHETE_USES)
-    inst.components.finiteuses:SetOnFinished(inst.Remove)
-    inst.components.finiteuses:SetConsumption(ACTIONS.HACK, TUNING.MOONGLASSMACHETE.CONSUMPTION)
-    -------
-    inst:AddComponent("equippable")
+	inst:AddComponent("inspectable")
 
-    inst:AddComponent("inspectable")
+	inst.components.equippable:SetOnEquip(onequip)
 
-    inst.components.equippable:SetOnEquip( onequip )
+	inst.components.equippable:SetOnUnequip(onunequip)
 
-    inst.components.equippable:SetOnUnequip( onunequip)
+	MakeHauntableLaunch(inst)
 
-    MakeHauntableLaunch(inst)
-
-    return inst
+	return inst
 end
 
 local function fn()
-    local inst = pristinefn()
+	local inst = pristinefn()
 
-    inst:AddComponent("symbolswapdata")
-    inst.components.symbolswapdata:SetData("glassmachete", "swap_glassmachete")
+	inst:AddComponent("symbolswapdata")
+	inst.components.symbolswapdata:SetData("glassmachete", "swap_glassmachete")
 
-    inst.entity:SetPristine()
+	inst.entity:SetPristine()
 
-    if not TheWorld.ismastersim then
-        return inst
-    end
+	if not TheWorld.ismastersim then
+		return inst
+	end
 
-    masterfn(inst)
+	masterfn(inst)
 
-    return inst
+	return inst
 end
 
 return Prefab("moonglassmachete", fn, assets)
