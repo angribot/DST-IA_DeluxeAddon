@@ -208,14 +208,11 @@ env.AddSimPostInit(function()
 	set_ingredients("book_light", { Ingredient("papyrus", 2), Ingredient(sw and "rainbowjellyfish_dead" or "lightbulb", 2) })
 	set_ingredients("book_fish", { Ingredient("papyrus", 2), Ingredient(sw and "roe" or "oceanfishingbobber_ball", 2) })
 	set_ingredients("book_rain", { Ingredient("papyrus", 2), Ingredient(sw and "doydoyfeather" or "goose_feather", 2) })
-	set_ingredients(
-		"book_moon",
-		{
-			Ingredient("papyrus", 2),
-			Ingredient((sw and not env.GetModConfigData("starstuff_octopusking")) and "magic_seal" or "opalpreciousgem", 1),
-			Ingredient("moonbutterflywings", 2),
-		}
-	)
+	set_ingredients("book_moon", {
+		Ingredient("papyrus", 2),
+		Ingredient((sw and not env.GetModConfigData("starstuff_octopusking")) and "magic_seal" or "opalpreciousgem", 1),
+		Ingredient("moonbutterflywings", 2),
+	})
 	-- Night Stories
 	set_ingredients("book_wetness", { Ingredient("book_rain", 1), Ingredient("book_temperature", 1), Ingredient(sw and "magic_seal" or "malbatross_feather", sw and 1 or 10) })
 
