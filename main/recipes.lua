@@ -104,6 +104,10 @@ env.AddSimPostInit(function()
 		set_altar_by_type(prefab, "moonrocknugget", world_is_volcano, set_type("obsidian"))
 	end
 	set_altar_by_type("alterguardianhatshard", "moonglass", world_is_sw, set_amount(40))
+	set_altar_by_type("book_wetness", "malbatross_feather", world_is_sw, function(ingredient)
+		ingredient.type = "magic_seal"
+		ingredient.amount = 1
+	end)
 
 	if world_is_sw(TheWorld) and env.GetModConfigData("craftable_atrium_loots") then
 		AddRecipe(
