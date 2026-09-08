@@ -6,23 +6,22 @@ local function zheng(zh, en)
 	return LOC[locale] or en
 end
 
-version = "1.14.2"
+version = "1.15.0"
 name = zheng("岛屿冒险：豪华补充包", "Island Adventures: Deluxe Addon")
 author = "Civi, Tony, Jerry, Yulong"
 changelog = zheng(
 	[[
-- 移除机器人用睿智帽制作模块、吃死水母充电的补丁（IA 已自带）
-
-最近更新：
-- 修复驾驶黑曜石船时手上物品消失
-- 适配兼容岛屿冒险最新本体(2026-09-06)
+- 清理旧配方覆盖，材料交还游戏本体与 IA 管理
+- 移除旧多配方设置项
+- 修复 Civi 对四种 IA 食物增益的等级延时、重复食用和读档处理，移除重复食物效果（暗夜故事集兼容项）
+- 月书材料不再受星杖交易设置影响
+- 骨三件套制作仅受自身设置与海难世界条件控制
 ]],
 	[[
-- Remove patches for crafting WX78 modules with Brain of Thought and charging from dead jellyfish (now included in IA)
-
-Recent Changes:
-- Fix held item visibility while sailing the obsidian boat
-- Make compatible with IA (2026-09-06)
+- Remove legacy ingredient overrides and the old multi-recipe option; defer ingredients to DST and IA
+- Fix Civi's level-based duration scaling, refresh, and save-load handling for four IA food buffs; remove duplicate food effects (Night Stories compat)
+- Decouple moon book ingredients from the star-staff trading option
+- Control craftable Atrium loot only through its own option and SW world conditions
 ]]
 )
 description = zheng("版本: ", "Version: ")
