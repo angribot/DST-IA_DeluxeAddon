@@ -1,87 +1,41 @@
-local AddPrefabPostInitAny = AddPrefabPostInitAny
+local AddPrefabPostInit = AddPrefabPostInit
 GLOBAL.setfenv(1, GLOBAL)
 
-local function get_level_mult(inst)
-	local mult = 1
-	if inst and inst.prefab == "civi" then
-		mult = 1 + inst.level * 0.25
+local BUFF_DURATIONS = {
+	buff_caffeine = TUNING.FOOD_SPEED_LONG,
+	buff_purple_grouper = TUNING.FOOD_SPEED_AVERAGE,
+	buff_pierrot_fish = TUNING.FOOD_SPEED_AVERAGE,
+	buff_tropicalbouillabaisse = TUNING.FOOD_SPEED_MED,
+}
+
+local function with_civi_duration(base_fn, default_duration, attaching)
+	return function(inst, target, followsymbol, followoffset, data, ...)
+		if target and target.prefab == "civi" then
+			local buff_data = shallowcopy(data or {})
+			-- Saved timers are restored before attachment. Do not multiply their remaining time again.
+			local remaining = attaching and inst.components.timer:GetTimeLeft("buffover") or nil
+			buff_data.duration = remaining or ((buff_data.duration or default_duration) * (1 + (target.level or 0) * 0.25))
+			data = buff_data
+		end
+
+		-- Let IA apply the same duration to its timer and locomotor effects, including refresh rules.
+		return base_fn(inst, target, followsymbol, followoffset, data, ...)
 	end
-	return mult
 end
 
-local function edible_buff_postinit(inst)
+local function buff_postinit(inst)
 	if not TheWorld.ismastersim then
 		return
 	end
-	if not inst.components.edible then
-		return
-	end
 
-	local edible = inst.components.edible
-	if edible.caffeinedelta and edible.caffeinedelta ~= 0 and edible.caffeineduration and edible.caffeineduration ~= 0 then
-		local _oneaten = edible.oneaten
-		edible.oneaten = function(inst, eater)
-			if _oneaten then
-				_oneaten(inst, eater)
-			end
-			if eater and eater.components.locomotor then
-				local level_mult = get_level_mult(eater)
-				eater.components.locomotor:SetExternalSpeedAdder(eater, "CAFFEINE", edible.caffeinedelta, edible.caffeineduration * level_mult)
-			end
-		end
-	end
-
-	if edible.surferdelta and edible.surferdelta ~= 0 and edible.surferduration and edible.surferduration ~= 0 then
-		local _oneaten = edible.oneaten
-		edible.oneaten = function(inst, eater)
-			if _oneaten then
-				_oneaten(inst, eater)
-			end
-			if eater and eater.components.locomotor then
-				local level_mult = get_level_mult(eater)
-				eater.components.locomotor:SetExternalSpeedAdder(eater, "SURF", edible.surferdelta, edible.surferduration * level_mult)
-			end
-		end
-	end
-
-	if edible.autodrydelta and edible.autodrydelta ~= 0 and edible.autodryduration and edible.autodryduration ~= 0 then
-		local _oneaten = edible.oneaten
-		edible.oneaten = function(inst, eater)
-			if _oneaten then
-				_oneaten(inst, eater)
-			end
-			if eater and eater.components.locomotor then
-				local level_mult = get_level_mult(eater)
-				eater.components.locomotor:SetExternalSpeedAdder(eater, "AUTODRY", edible.autodrydelta, edible.autodryduration * level_mult)
-			end
-		end
-	end
-
-	if edible.autocooldelta and edible.autocooldelta ~= 0 then
-		local _oneaten = edible.oneaten
-		edible.oneaten = function(inst, eater)
-			if _oneaten then
-				_oneaten(inst, eater)
-			end
-			if eater and eater.components.temperature then
-				local current_temp = eater.components.temperature:GetCurrent()
-				local new_temp = math.max(current_temp - edible.autocooldelta, TUNING.STARTING_TEMP)
-				eater.components.temperature:SetTemperature(new_temp)
-			end
-		end
-	end
-
-	if edible.naughtyvalue and edible.naughtyvalue > 0 then
-		local _oneaten = edible.oneaten
-		edible.oneaten = function(inst, eater)
-			if _oneaten then
-				_oneaten(inst, eater)
-			end
-			if TheWorld.components.kramped and eater:HasTag("player") then
-				TheWorld.components.kramped:OnNaughtyAction(edible.naughtyvalue, eater)
-			end
-		end
-	end
+	-- NightStories only hooks buffs whose timers already exist during prefab postinit.
+	-- These IA buffs start their timers on attachment, so they need their own adapter.
+	local debuff = inst.components.debuff
+	local duration = BUFF_DURATIONS[inst.prefab]
+	debuff:SetAttachedFn(with_civi_duration(debuff.onattachedfn, duration, true))
+	debuff:SetExtendedFn(with_civi_duration(debuff.onextendedfn, duration, false))
 end
 
-AddPrefabPostInitAny(edible_buff_postinit)
+for prefab in pairs(BUFF_DURATIONS) do
+	AddPrefabPostInit(prefab, buff_postinit)
+end

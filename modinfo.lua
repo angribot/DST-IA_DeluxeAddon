@@ -121,13 +121,6 @@ configuration_options = {
 	},
 	AddTitle(zheng("- 配方相关 -", "- The Crafting -")),
 	{
-		name = "nope_gem_ingredients",
-		label = zheng("移除宝石核心的多配方支持", "Nope Gem Core Ingredients"),
-		hover = zheng("配方材料会根据世界类型自动判断", "Ingredients are judged by world type automatically."),
-		options = boolean,
-		default = true,
-	},
-	{
 		name = "eyebrella_second_recipe",
 		label = zheng("虎鲨眼作为眼球伞的第二配方", "Tiger Eye as Eyebrella's ingredient"),
 		options = boolean,
