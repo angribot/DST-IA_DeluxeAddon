@@ -6,14 +6,17 @@ local function zheng(zh, en)
 	return LOC[locale] or en
 end
 
-version = "1.15.1"
+version = "1.15.2"
 name = zheng("岛屿冒险：豪华补充包", "Island Adventures: Deluxe Addon")
 author = "Civi, Tony, Jerry, Yulong"
 changelog = zheng(
 	[[
-- 清理了弃用的洪水代码
+- 黑曜石矛皮肤充能适配改为独立处理，其他黑曜石工具沿用上游行为
+- 黑曜石矛应用或清除皮肤时立即刷新当前充能外观
+- 两种帽子清除皮肤时复用上游逻辑，并修正漂浮状态下的动画 bank，避免外观消失
 
 最近更新：
+- 清理了弃用的洪水代码
 - 清理旧配方覆盖，材料交还游戏本体与 IA 管理
 - 移除旧多配方设置项
 - 修复 Civi 对四种 IA 食物增益的等级延时、重复食用和读档处理，移除重复食物效果（暗夜故事集兼容项）
@@ -21,9 +24,12 @@ changelog = zheng(
 - 骨三件套制作仅受自身设置与海难世界条件控制
 ]],
 	[[
-- Remove deprecated flood component override
+- Scope obsidian spear skin charge handling to the spear; leave other obsidian tools to upstream behavior
+- Refresh charged obsidian spear visuals immediately when applying or clearing skins
+- Reuse upstream skin clearing for both hats and correct floating animation banks to prevent disappearing visuals
 
 Recent Changes:
+- Remove deprecated flood component override
 - Remove legacy ingredient overrides and the old multi-recipe option; defer ingredients to DST and IA
 - Fix Civi's level-based duration scaling, refresh, and save-load handling for four IA food buffs; remove duplicate food effects (Night Stories compat)
 - Decouple moon book ingredients from the star-staff trading option
