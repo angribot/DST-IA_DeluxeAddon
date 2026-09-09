@@ -15,7 +15,6 @@ local mainfiles = {
 local postinits = {
 	-- components
 	"components/container",
-	"components/obsidiantool",
 	-- prefabs
 	"prefabs/book_toggledownfall",
 	"prefabs/dragoonfly",
@@ -27,6 +26,7 @@ local postinits = {
 	"prefabs/octopusking",
 	"prefabs/opalpreciousgem",
 	"prefabs/rocks",
+	"prefabs/spear_obsidian",
 
 	-- root
 	"buff_oneaten",
