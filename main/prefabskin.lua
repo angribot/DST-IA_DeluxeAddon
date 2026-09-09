@@ -23,30 +23,25 @@ cutlass_clear_fn = function(inst)
 	inst.components.floater:UpdateAnimations("idle_water", "idle")
 end
 
--- double_umbrellahat_init_fn = function(inst, skinname)
---     GlassicAPI.BasicInitFn(inst, skinname)
--- end
+local function refresh_spear_skin(inst, skin_build)
+	local obsidiantool = inst.components.obsidiantool
+	local suffix = obsidiantool and obsidiantool:GetAnimSuffix() or ""
+	inst.components.floater:UpdateAnimations((skin_build and "spear_water" or "idle_water") .. suffix, "idle" .. suffix)
 
-double_umbrellahat_clear_fn = function(inst)
-	ia_basic_clear_fn(inst, "hat_double_umbrella")
-end
-
--- aerodynamichat_init_fn = function(inst, skinname)
---     GlassicAPI.BasicInitFn(inst, skinname)
--- end
-
-aerodynamichat_clear_fn = function(inst)
-	ia_basic_clear_fn(inst, "hat_aerodynamic")
+	local equipper = inst.components.equippable and inst.components.equippable:IsEquipped() and inst.components.inventoryitem and inst.components.inventoryitem:GetGrandOwner()
+	if equipper then
+		equipper.AnimState:OverrideSymbol("swap_object", skin_build or "swap_spear_obsidian", "swap_spear" .. suffix)
+	end
 end
 
 spear_obsidian_init_fn = function(inst)
 	GlassicAPI.BasicInitFn(inst)
-	inst.components.floater:UpdateAnimations("spear_water", "idle")
+	refresh_spear_skin(inst, inst:GetSkinBuild())
 end
 
 spear_obsidian_clear_fn = function(inst)
 	ia_basic_clear_fn(inst, "spear_obsidian")
-	inst.components.floater:UpdateAnimations("idle_water", "idle")
+	refresh_spear_skin(inst)
 end
 
 GlassicAPI.SetOnequipSkinItem("cutlass", { "swap_object", "swap_cutlass", "swap_cutlass" })
