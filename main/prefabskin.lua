@@ -23,6 +23,19 @@ cutlass_clear_fn = function(inst)
 	inst.components.floater:UpdateAnimations("idle_water", "idle")
 end
 
+-- Upstream clear resets floating hats to prefab-name banks instead of their hat banks.
+local double_umbrellahat_clear = double_umbrellahat_clear_fn
+double_umbrellahat_clear_fn = function(inst, ...)
+	double_umbrellahat_clear(inst, ...)
+	inst.AnimState:SetBank("hat_double_umbrella")
+end
+
+local aerodynamichat_clear = aerodynamichat_clear_fn
+aerodynamichat_clear_fn = function(inst, ...)
+	aerodynamichat_clear(inst, ...)
+	inst.AnimState:SetBank("hat_aerodynamic")
+end
+
 local function refresh_spear_skin(inst, skin_build)
 	local obsidiantool = inst.components.obsidiantool
 	local suffix = obsidiantool and obsidiantool:GetAnimSuffix() or ""
