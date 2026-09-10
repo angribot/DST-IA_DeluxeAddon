@@ -2,6 +2,8 @@
 
 This project is an add-on for Island Adventures, a Don't Starve Together mod.
 
+For Chinese translations of game terminology, consult `languages/chinese_s.po`.
+
 ## Upstream
 
 - Island Adventures
