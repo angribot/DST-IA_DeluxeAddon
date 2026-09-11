@@ -1,7 +1,7 @@
 if not GetModConfigData("dragoonfly") then
 	return
 end
-local AddLevelPreInit = AddLevelPreInit
+local AddTaskSetPreInit = AddTaskSetPreInit
 local StaticLayout = require("map/static_layout")
 local AllLayouts = require("map/layouts").Layouts
 GLOBAL.setfenv(1, GLOBAL)
@@ -14,10 +14,10 @@ AllLayouts["VolcanoDragonflyArena"] = StaticLayout.Get("map/static_layouts/volca
 })
 AllLayouts["VolcanoDragonflyArena"].ground_types = { WORLD_TILES.BRICK_GLOW }
 
-AddLevelPreInit("SURVIVAL_VOLCANO_CLASSIC", function(level)
-	level.set_pieces = level.set_pieces or {}
-	level.required_prefabs = level.required_prefabs or {}
+AddTaskSetPreInit("volcano", function(taskset)
+	taskset.set_pieces = taskset.set_pieces or {}
+	taskset.required_prefabs = taskset.required_prefabs or {}
 
-	level.set_pieces.VolcanoDragonflyArena = { count = 1, tasks = { "Volcano" } }
-	table.insert(level.required_prefabs, "dragonfly_spawner")
+	taskset.set_pieces.VolcanoDragonflyArena = { count = 1, tasks = { "Volcano" } }
+	table.insert(taskset.required_prefabs, "dragonfly_spawner")
 end)
