@@ -17,3 +17,7 @@ For Chinese translations of game terminology, consult `languages/chinese_s.po`.
 
 - Night Stories
   - Source: https://github.com/angribot/DST-NightStories
+
+## Validation
+
+Use `luajit` when no lua environment is found.
