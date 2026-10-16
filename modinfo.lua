@@ -6,14 +6,20 @@ local function zheng(zh, en)
 	return LOC[locale] or en
 end
 
-version = "1.15.3"
+version = "1.15.4"
 name = zheng("岛屿冒险：豪华补充包", "Island Adventures: Deluxe Addon")
 author = "Civi, Tony, Jerry, Yulong"
 changelog = zheng(
 	[[
-- 修复龙蝇仅在经典预设生成的问题，现支持所有使用火山任务集的预设
+- 黑曜石船沉船改为复用上游逻辑，修正沉没时的报错与重复音效
+- 黑曜石船改用 IA 的船只规则，现可用铭牌命名
+- 黑曜石帆移除弃用的换帆同步变量，交由上游航海组件处理
+- 黑曜石帆的光源交由黑曜石工具组件管理，保留原有光照半径
+- 修复机器人吃水母调味料理不充电的问题
+- 清理无效的船只常量、旧船体残留代码和无法触发的铭牌布局
 
 最近更新：
+- 修复龙蝇仅在经典预设生成的问题，现支持所有使用火山任务集的预设
 - 黑曜石矛皮肤充能适配改为独立处理，其他黑曜石工具沿用上游行为
 - 黑曜石矛应用或清除皮肤时立即刷新当前充能外观
 - 两种帽子清除皮肤时复用上游逻辑，并修正漂浮状态下的动画 bank，避免外观消失
@@ -25,9 +31,15 @@ changelog = zheng(
 - 骨三件套制作仅受自身设置与海难世界条件控制
 ]],
 	[[
-- Fix dragonfly arena only generating with the classic preset; support all presets using the volcano task set
+- Reuse upstream sinking logic for the obsidian boat and fix the error and duplicate sound on sinking
+- Align the obsidian boat with IA boat rules so it can be named with a nameplate
+- Drop the deprecated sail sync variable from the obsidian sail; upstream sailing components handle it now
+- Hand obsidian sail lighting to the obsidian tool component, keeping the original light radius
+- Fix WX-78 not being charged by jellyfish spice dishes
+- Remove dead boat constants, leftover boat item code and unreachable nameplate layouts
 
 Recent Changes:
+- Fix dragonfly arena only generating with the classic preset; support all presets using the volcano task set
 - Scope obsidian spear skin charge handling to the spear; leave other obsidian tools to upstream behavior
 - Refresh charged obsidian spear visuals immediately when applying or clearing skins
 - Reuse upstream skin clearing for both hats and correct floating animation banks to prevent disappearing visuals
