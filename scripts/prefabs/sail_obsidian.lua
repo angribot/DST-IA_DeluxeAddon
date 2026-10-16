@@ -25,39 +25,12 @@ local function GetObsidianEquippedHeat(inst, observer)
 	return heat
 end
 
-local function SpawnObsidianLight(inst)
-	local owner = inst.components.inventoryitem.owner
-	inst._obsidianlight = inst._obsidianlight or SpawnPrefab("obsidiantoollight")
-	inst._obsidianlight.entity:SetParent((owner or inst).entity)
-end
-
-local function RemoveObsidianLight(inst)
-	if inst._obsidianlight ~= nil then
-		inst._obsidianlight:Remove()
-		inst._obsidianlight = nil
-	end
-end
-
-local function ChangeObsidianLight(inst, old, new)
-	-- print("charge: ", old, new)
-	local percentage = new / inst.components.obsidiantool.maxcharge
-	local rad = Lerp(0.8, 3.2, percentage)
-
-	if percentage >= inst.components.obsidiantool.yellow_threshold then
-		SpawnObsidianLight(inst)
-
-		if percentage >= inst.components.obsidiantool.red_threshold then
-			inst._obsidianlight.Light:SetColour(254 / 255, 98 / 255, 75 / 255)
-			inst._obsidianlight.Light:SetRadius(rad)
-		elseif percentage >= inst.components.obsidiantool.orange_threshold then
-			inst._obsidianlight.Light:SetColour(255 / 255, 159 / 255, 102 / 255)
-			inst._obsidianlight.Light:SetRadius(rad)
-		else
-			inst._obsidianlight.Light:SetColour(255 / 255, 223 / 255, 125 / 255)
-			inst._obsidianlight.Light:SetRadius(rad)
-		end
-	else
-		RemoveObsidianLight(inst)
+-- obsidiantool owns light spawning, colour and cleanup. It calls onchargedelta after
+-- updating its light, so only the original sail radius is restored here.
+local function UpdateObsidianLightRadius(inst)
+	local tool = inst.components.obsidiantool
+	if tool and tool._light then
+		tool._light.Light:SetRadius(Lerp(0.8, 3.2, tool:GetChargePercent()))
 	end
 end
 
@@ -130,8 +103,6 @@ local function onequip(inst, owner)
 	if owner.components.sailable.sailor then
 		local sailor = owner.components.sailable.sailor
 		sailor:PushEvent("sailequipped")
-		inst.sailquipped:set_local(true)
-		inst.sailquipped:set(true)
 		if inst.flapsound then
 			sailor.SoundEmitter:PlaySound(inst.flapsound)
 		end
@@ -161,8 +132,6 @@ local function onunequip(inst, owner)
 		if owner.components.sailable and owner.components.sailable.sailor then
 			local sailor = owner.components.sailable.sailor
 			sailor:PushEvent("sailunequipped")
-			inst.sailquipped:set_local(false)
-			inst.sailquipped:set(false)
 			if inst.flapsound then
 				sailor.SoundEmitter:PlaySound(inst.flapsound)
 			end
@@ -203,19 +172,6 @@ local function common_pristine()
 
 	MakeInventoryPhysics(inst)
 	inst:AddTag("sail")
-
-	--networking the equip/unequip event
-	inst.sailquipped = net_bool(inst.GUID, "sailquipped", not TheWorld.ismastersim and "sailquipped" or nil)
-
-	if not TheWorld.ismastersim then
-		inst:ListenForEvent("sailquipped", function(inst)
-			if inst.sailquipped:value() then
-				TheLocalPlayer:PushEvent("sailequipped")
-			else
-				TheLocalPlayer:PushEvent("sailunequipped")
-			end
-		end)
-	end
 
 	MakeInventoryFloatable(inst)
 	inst.components.floater:UpdateAnimations("idle_water", "idle")
@@ -268,7 +224,7 @@ local function obsidian_fn()
 	common_master(inst)
 
 	inst:AddComponent("obsidiantool")
-	inst.components.obsidiantool.onchargedelta = ChangeObsidianLight
+	inst.components.obsidiantool.onchargedelta = UpdateObsidianLightRadius
 	inst.components.obsidiantool.cooldowntime = 15 / inst.components.obsidiantool.maxcharge
 
 	-- inst:AddComponent("heater")
@@ -299,14 +255,6 @@ local function obsidian_fn()
 	inst.RemoveTask = inst:DoTaskInTime(1, inst.Remove)
 	-- inst.components.fueled.fueltype = FUELTYPE.MECHANICAL
 	-- inst.components.fueled.accepting = true
-
-	local OnRemoveEntity = inst.OnRemoveEntity
-	function inst:OnRemoveEntity(...)
-		RemoveObsidianLight(self)
-		if OnRemoveEntity then
-			OnRemoveEntity(self, ...)
-		end
-	end
 
 	return inst
 end
