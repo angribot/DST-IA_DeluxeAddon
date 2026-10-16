@@ -29,17 +29,12 @@ local prefabs = {
 	-- "flotsam_surfboard",
 }
 
-local function sink(inst)
+-- Fallback copy of IA's local Sink in prefabs/boats.lua, used only if it cannot be resolved.
+local function fallback_sink(inst)
 	local sailor = inst.components.sailable:GetSailor()
 	if sailor then
-		if sailor.components.health then
-			sailor.components.health:Drown(true)
-		end
-		--moved to after drown call because of double drown for wurt and because otherwise when you drown too close to shore you can get put back onto shore due to keeponland
 		sailor.components.sailor:Disembark()
-
-		--im pretty sure its here because otherwise it will play twice due to keeponland, plus it needs the boats sinksound -Half
-		inst.SoundEmitter:PlaySound(inst.sinksound) --Not sure why this is here and not in the SG -M
+		sailor:PushEvent("onsink", { ia_boat = inst })
 	end
 	if inst.components.container then
 		inst.components.container:DropEverything()
@@ -48,12 +43,29 @@ local function sink(inst)
 	inst:Remove()
 end
 
+local upstream_sink = nil
+local function sink(inst)
+	-- Resolve lazily so prefab registration order does not matter.
+	if upstream_sink == nil then
+		local boat_row = Prefabs["boat_row"]
+		upstream_sink = boat_row and GlassicAPI.UpvalueUtil.GetUpvalue(boat_row.fn, "common.Sink") or nil
+		if type(upstream_sink) ~= "function" then
+			print("[IA Deluxe Addon] Could not resolve IA boat Sink; using fallback.")
+			upstream_sink = fallback_sink
+		end
+	end
+	return upstream_sink(inst)
+end
+
 local function onhit(inst, worker)
 	inst.AnimState:PlayAnimation("hit")
 	inst.AnimState:PushAnimation("run_loop", true)
 end
 
 local function onworked(inst, worker)
+	if inst.actualprefab then
+		inst.prefab = inst.actualprefab -- sailor_replica renames sailed boats; restore it for recipe loot
+	end
 	inst.components.lootdropper:DropLoot()
 	if inst.components.container then
 		inst.components.container:DropEverything()
@@ -93,10 +105,11 @@ local function common()
 	inst.entity:AddAnimState()
 	inst.entity:AddSoundEmitter()
 	inst.entity:AddNetwork()
-	inst.entity:AddPhysics()
 	inst.entity:AddMiniMapEntity()
 
-	inst:AddTag("boat")
+	inst:SetDeploySmartRadius(0.5)
+
+	inst:AddTag("ia_boat")
 	inst:AddTag("sailable")
 
 	inst.Transform:SetFourFaced()
@@ -104,13 +117,16 @@ local function common()
 
 	inst.AnimState:SetFinalOffset(FINALOFFSET_MIN) --has some visual glitches but looks much better than the boat being infront of the player on a disembark
 
-	inst.Physics:SetCylinder(0.25, 2)
+	MakeWeakWaterObstaclePhysics(inst, 0.01, 0.25, 2)
+	inst:RemoveTag("blocker") -- Match IA boats: RoT boat interactions should not treat this as a blocker.
 
 	inst.no_wet_prefix = true
 
 	inst.sailmusic = "sailing"
 
 	inst.boatvisuals = {}
+
+	inst:AddComponent("highlightchild")
 
 	inst:AddComponent("rowboatwakespawner")
 	inst.components.rowboatwakespawner:SetFacingOffset({
@@ -144,21 +160,6 @@ local function common()
 	inst.components.writeable:SetDefaultWriteable(false)
 	inst.components.writeable:SetAutomaticDescriptionEnabled(false)
 
-	local _Write = inst.components.writeable.Write
-	inst.components.writeable.Write = function(self, doer, text, ...)
-		if not text then
-			text = self.text
-			if doer.tool_prefab then
-				doer.components.inventory:GiveItem(SpawnPrefab(doer.tool_prefab), nil, inst:GetPosition())
-			end
-		else
-			inst.SoundEmitter:PlaySound("dontstarve/common/together/draw")
-		end
-
-		inst.boatname:set(text and text ~= "" and text or "")
-		_Write(self, doer, text, ...)
-	end
-
 	local _OnLoad = inst.components.writeable.OnLoad
 	inst.components.writeable.OnLoad = function(self, ...)
 		_OnLoad(self, ...)
@@ -167,7 +168,6 @@ local function common()
 	end
 
 	inst:AddComponent("sailable")
-	inst.components.sailable.sanitydrain = TUNING.RAFT_SANITY_DRAIN
 	inst.components.sailable.movementbonus = TUNING.RAFT_SPEED
 	inst.components.sailable.flotsambuild = "flotsam_bamboo_build"
 	inst.components.sailable.maprevealbonus = TUNING.MAPREVEAL_RAFT_BONUS
@@ -214,112 +214,8 @@ local function common()
 	inst.components.container.stay_open_on_hide = true
 
 	inst:AddComponent("boatvisualmanager")
-
-	return inst
-end
-
-local function item_ondropped(inst)
-	--If this is a valid place to be deployed, auto deploy yourself.
-	local x, y, z = inst.Transform:GetWorldPosition()
-	local pt = Vector3(x, 0, z)
-	if inst.components.deployable and inst._custom_candeploy_fn and inst:_custom_candeploy_fn(pt) then
-		inst.components.deployable.forcedeploy = true
-		inst.components.deployable:Deploy(pt, inst)
-		inst.components.deployable.forcedeploy = false
-	end
-end
-
-local function item_ondeploy(inst, pt, deployer)
-	local boat = inst.components.pocket:RemoveItem(inst.boat) or SpawnPrefab(inst.boat)
-	if boat then
-		local value = inst.boatname:value()
-		local name = value and value ~= "" and value or ""
-		boat.components.writeable:SetText(name)
-		boat.boatname:set(name)
-
-		local x, y, z = pt:Get()
-		boat.components.flotsamspawner.inpocket = false
-		boat.Physics:SetCollides(false)
-		boat.Physics:Teleport(x, y, z)
-		boat.Physics:SetCollides(true)
-		inst:Remove()
-	end
-end
-
-local function item_common()
-	local inst = CreateEntity()
-
-	inst.entity:AddTransform()
-	inst.entity:AddAnimState()
-	inst.entity:AddNetwork()
-	inst.entity:AddSoundEmitter()
-	inst.entity:AddMiniMapEntity()
-
-	inst.MiniMapEntity:SetPriority(5)
-
-	MakeInventoryPhysics(inst)
-	MakeInventoryFloatable(inst)
-
-	inst:AddTag("boat")
-
-	inst.boatname = net_string(inst.GUID, "boatname")
-
-	inst.displaynamefn = function(_inst)
-		local name = _inst.boatname:value()
-		return name ~= "" and name or STRINGS.NAMES[string.upper(_inst.prefab)]
-	end
-
-	inst.entity:SetPristine()
-
-	if not TheWorld.ismastersim then
-		return inst
-	end
-
-	inst.boat = nil
-
-	inst:AddComponent("inspectable")
-	inst:AddComponent("inventoryitem")
-	inst.components.inventoryitem:SetOnDroppedFn(item_ondropped)
-
-	inst:AddComponent("pocket")
-
-	inst:AddComponent("deployable")
-	inst.components.deployable:SetDeployMode(DEPLOYMODE.CUSTOM)
-	inst._custom_candeploy_fn = function(_inst, pt)
-		local tile = TheWorld.Map:GetTileAtPoint(pt:Get())
-		local IsWaterMode = IA_CONFIG.aquaticplacedstwater and IsWaterAny or IsWater
-		return IsWaterMode(tile)
-	end
-	inst.components.deployable.ondeploy = item_ondeploy
-	inst.components.deployable.candeployonland = false
-	inst.components.deployable.candeployonbuildableocean = true
-	inst.components.deployable.candeployonunbuildableocean = true
-	inst.components.deployable.deploydistance = 3
-
-	inst:AddComponent("writeable")
-	inst.components.writeable:SetDefaultWriteable(false)
-	inst.components.writeable:SetAutomaticDescriptionEnabled(false)
-	local _Write = inst.components.writeable.Write
-	inst.components.writeable.Write = function(self, doer, text, ...)
-		if not text then
-			text = self.text
-			if doer and doer.tool_prefab then
-				doer.components.inventory:GiveItem(SpawnPrefab(doer.tool_prefab), nil, inst:GetPosition())
-			end
-		else
-			inst.SoundEmitter:PlaySound("dontstarve/common/together/draw")
-		end
-
-		inst.boatname:set(text and text ~= "" and text or "")
-		_Write(self, doer, text, ...)
-	end
-
-	local _OnLoad = inst.components.writeable.OnLoad
-	inst.components.writeable.OnLoad = function(self, ...)
-		_OnLoad(self, ...)
-		local text = self.text
-		inst.boatname:set(text and text ~= "" and text or "")
-	end
+	inst:AddComponent("colouradder")
+	inst:AddComponent("eroder")
 
 	return inst
 end
@@ -389,7 +285,6 @@ local function obsidianboatfn()
 	inst.landsound = "ia/common/boatjump_land_shell"
 	inst.sinksound = "ia/common/boat/sinking/row"
 
-	inst.components.sailable.sanitydrain = TUNING.OBSIDIANBOAT_SANITY_DRAIN
 	inst.components.sailable.movementbonus = TUNING.OBSIDIANBOAT_SPEED
 	inst.components.sailable.flotsambuild = "flotsam_armoured_build"
 	inst.components.sailable.maprevealbonus = TUNING.MAPREVEAL_OBSIDIANBOAT_BONUS
