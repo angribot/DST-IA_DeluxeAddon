@@ -15,7 +15,14 @@ IA_SPICES = {
 require("cooking")
 local spicedfoods = require("spicedfoods")
 local UpvalueUtil = GlassicAPI.UpvalueUtil
-local wx78_chargable = env.GetModConfigData("wx78_charge_via_zappy_food") and 1 or nil
+local wx78_chargable = env.GetModConfigData("wx78_charge_via_zappy_food")
+
+-- Prepared food prefabs read edible.chargevalue from their recipe data at spawn time.
+local function set_jellyfish_charge(recipe)
+	if wx78_chargable and recipe.spice == "SPICE_JELLYFISH" then
+		recipe.chargevalue = TUNING.WX78_CHARGE_SMALL
+	end
+end
 
 local SPICES = UpvalueUtil.GetUpvalue(GenerateSpicedFoods, "SPICES")
 if not SPICES then
@@ -28,10 +35,8 @@ GenerateSpicedFoods(require("preparedfoods_warly"))
 
 for name, recipe in pairs(spicedfoods) do
 	if IA_SPICES[recipe.spice] then
+		set_jellyfish_charge(recipe)
 		AddCookerRecipe("portablespicer", recipe)
-		if recipe.spice == "SPICE_JELLYFISH" then
-			TUNING.WX78_CHARGING_FOODS[name] = wx78_chargable or TUNING.WX78_CHARGING_FOODS[name]
-		end
 	end
 end
 
@@ -46,10 +51,8 @@ for name, recipe in pairs(spicedfoods) do
 	end
 end
 for name, recipe in pairs(ia_spiced) do
+	set_jellyfish_charge(recipe)
 	env.AddCookerRecipe("portablespicer", recipe)
-	if recipe.spice == "SPICE_JELLYFISH" then
-		TUNING.WX78_CHARGING_FOODS[name] = wx78_chargable or TUNING.WX78_CHARGING_FOODS[name]
-	end
 	ia_spicedfoods[name] = recipe
 	-- IA creates these prefabs; keep them out of the vanilla prefab list.
 	spicedfoods[name] = nil
